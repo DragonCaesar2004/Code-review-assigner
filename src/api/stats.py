@@ -3,7 +3,7 @@ API эндпоинты для получения статистики
 """
 from typing import List
 from fastapi import APIRouter, Depends
-from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import Session
 
 from src.models.database import get_db
 from src.services.stats_service import StatsService
@@ -23,15 +23,15 @@ router = APIRouter(prefix="/stats", tags=["Statistics"])
     response_model=List[UserAssignmentStats],
     summary="Статистика назначений по ревьюверам"
 )
-async def get_reviewer_statistics(
-    db: AsyncSession = Depends(get_db)
+def get_reviewer_statistics(
+    db: Session = Depends(get_db)
 ) -> List[UserAssignmentStats]:
     """
     Получить статистику назначений по каждому ревьюверу
     (количество PR, на которые был назначен каждый пользователь).
     """
     service = StatsService(db)
-    return await service.get_user_assignment_stats()
+    return service.get_user_assignment_stats()
 
 
 @router.get(
@@ -39,15 +39,15 @@ async def get_reviewer_statistics(
     response_model=List[PRReviewerStats],
     summary="Статистика ревьюверов по PR"
 )
-async def get_pr_statistics(
-    db: AsyncSession = Depends(get_db)
+def get_pr_statistics(
+    db: Session = Depends(get_db)
 ) -> List[PRReviewerStats]:
     """
     Получить статистику ревьюверов по каждому PR
     (сколько ревьюверов назначено на каждый PR).
     """
     service = StatsService(db)
-    return await service.get_pr_reviewer_stats()
+    return service.get_pr_reviewer_stats()
 
 
 @router.get(
@@ -55,15 +55,15 @@ async def get_pr_statistics(
     response_model=OverallStats,
     summary="Общая статистика системы"
 )
-async def get_overall_statistics(
-    db: AsyncSession = Depends(get_db)
+def get_overall_statistics(
+    db: Session = Depends(get_db)
 ) -> OverallStats:
     """
     Получить общую статистику системы
     (количество команд, пользователей, PR, назначений).
     """
     service = StatsService(db)
-    return await service.get_overall_stats()
+    return service.get_overall_stats()
 
 
 @router.get(
@@ -71,11 +71,11 @@ async def get_overall_statistics(
     response_model=StatsResponse,
     summary="Получить полную статистику"
 )
-async def get_full_statistics(
-    db: AsyncSession = Depends(get_db)
+def get_full_statistics(
+    db: Session = Depends(get_db)
 ) -> StatsResponse:
     """
     Получить комбинированную статистику: по ревьюверам, по PR и общую.
     """
     service = StatsService(db)
-    return await service.get_combined_stats()
+    return service.get_combined_stats()
