@@ -18,6 +18,7 @@ __all__ = [
     "user_service",
     "pull_request_service",
     "reviewer_assignment_service",
+    "stats_service",
     # Exceptions
     "AppException",
     "TeamExistsException",
